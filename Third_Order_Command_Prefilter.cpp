@@ -1,11 +1,10 @@
-
-#include <Third_Order_Command_Prefilter.h>
+#include "Third_Order_Command_Prefilter.h"
 
 // Parameters Set Up for Third-Order Command Prefilter
 void THIRD_ORDER_COMMAND_PREFILTER::Setup(double Cutoff_Freq, double Sample_Interval)
 {
     fc = Cutoff_Freq;
-    dt = Sample_Interval;
+    T = Sample_Interval;
 
     tau = 1.0 / (2.0 * PI * fc);    // Time Constant
     a[0] = 1.0 / (tau * tau * tau); // Coefficients
@@ -36,7 +35,7 @@ void THIRD_ORDER_COMMAND_PREFILTER::Update(double *Input_Sig, double *pos_f, dou
     for (int i = 0; i < 3; i++)
     {
         y[i] = a[0] * xf[i]; // output equation
-        xf[i] += dt * F[i];  // update (state) equation
+        xf[i] += T * F[i];  // update (state) equation
     }
 
     // Filtered Postion, Velocity, and Acceleration Commands
