@@ -1,10 +1,10 @@
-#include "Third_Order_Command_Prefilter.h"
+#include "command_prefilter.h"
 
 // Parameters Set Up for Third-Order Command Prefilter
-void THIRD_ORDER_COMMAND_PREFILTER::Setup(double Cutoff_Freq, double Sample_Interval)
+void CommandPrefilter::init(double cutoff_freq, double sample_interval)
 {
-    fc = Cutoff_Freq;
-    T = Sample_Interval;
+    fc = cutoff_freq;
+    T = sample_interval;
 
     tau = 1.0 / (2.0 * PI * fc);    // Time Constant
     a[0] = 1.0 / (tau * tau * tau); // Coefficients
@@ -21,10 +21,10 @@ void THIRD_ORDER_COMMAND_PREFILTER::Setup(double Cutoff_Freq, double Sample_Inte
 }
 
 // Algorithm of Third-Order Command Prefilter
-void THIRD_ORDER_COMMAND_PREFILTER::Update(double *Input_Sig, double *pos_f, double *vel_f, double *acc_f)
+void CommandPrefilter::update(double *input_sig, double *pos_f, double *vel_f, double *acc_f)
 {
     // Command Input Signal
-    r = *Input_Sig;
+    r = *input_sig;
 
     // Model Equations
     F[0] = xf[1];
