@@ -17,7 +17,7 @@
 class CommandPrefilter
 {
 public:
-    void init(double cutoff_freq, double sample_interval);
+    void init(const double& cutoff_freq, const double& sample_interval);
     void update(const double& input_sig, double& pos_f, double& vel_f, double& acc_f);
 
 private:

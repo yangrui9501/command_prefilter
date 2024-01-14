@@ -1,7 +1,7 @@
 #include "command_prefilter.h"
 
 // Parameters Set Up for Third-Order Command Prefilter
-void CommandPrefilter::init(double cutoff_freq, double sample_interval)
+void CommandPrefilter::init(const double& cutoff_freq, const double& sample_interval)
 {
     fc = cutoff_freq;
     T = sample_interval;
