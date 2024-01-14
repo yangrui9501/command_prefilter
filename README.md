@@ -2,59 +2,65 @@
 
 ```cpp
 #include <Arduino.h>
-#include "Third_Order_Command_Prefilter.h"
+#include <command_prefilter.h>
 
-// Sample Code for utilizing the 'THIRD_ORDER_COMMAND_PREFILTER' ...
-THIRD_ORDER_COMMAND_PREFILTER Cmd_Prefilter;
+#define TASK_PERIOD_MICROS 10000
 
-int idx = 0;
-double T = 0.001; // Sample Interval (Time interval of internal interrupt)
+const double T = (double)(TASK_PERIOD_MICROS) / 1000000.0;
+const double fc = 1.0;
+
+CommandPrefilter cmd_filter;
+
 double t = 0.0;
-double cmd_pos = 0.0; // Command Signal (Before filtering)
+double y = 0.0;
+double yf[3] = { 0.0 };
 
-double cmd_f[3];
-double pos_f = 0.0, vel_f = 0.0, acc_f = 0.0;
+unsigned long t_enter;
 
-/* Function Declaration */
-double sign(double u_in);
+double sign(const double& u_in)
+{
+	if (u_in > 0.0)
+		return 1.0;
+	else if (u_in < 0.0)
+		return -1.0;
+	return 0.0;
+}
 
-/* Main Program */
+void task()
+{
+	static int idx;
+	t = (double)(idx)*T;
+
+	y = sign(sin(2.0 * PI / 5.0 * t));
+	cmd_filter.update(y, yf[0], yf[1], yf[2]);
+
+	Serial.print(y);
+	Serial.print(" ");
+	Serial.print(yf[0]);
+	Serial.print(" ");
+	Serial.println();
+
+	idx++;
+}
+
+
+
 void setup()
 {
-  Serial.begin(115200);
+	Serial.begin(115200);
 
-  double fc = 2.5;
-  Cmd_Prefilter.Setup(fc, T);
+	cmd_filter.init(fc, T);
 
-  delay(3000);
+	t_enter = micros();
 }
 
 void loop()
 {
-  t = (double)idx * T;
-  cmd_pos = sign(sin(2.0 * PI / 5.0 * t));
+	if (micros() - t_enter >= TASK_PERIOD_MICROS)
+	{
+		t_enter = micros();
 
-  // Update the filtered command signals
-  Cmd_Prefilter.Update(&cmd_pos, cmd_f);
-  pos_f = cmd_f[0];
-  vel_f = cmd_f[1];
-  acc_f = cmd_f[2];
-
-  Serial.print(String() + cmd_pos + " " + pos_f + " " + vel_f + " " + acc_f);
-  Serial.println();
-  Serial.flush();
-
-  idx++;
-
-  delay(1);
-}
-
-double sign(double u_in)
-{
-  if (u_in > 0.0)
-    return 1.0;
-  else if (u_in < 0.0)
-    return -1.0;
-  return 0.0;
+		task();
+	}
 }
 ```
