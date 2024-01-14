@@ -21,10 +21,10 @@ void CommandPrefilter::init(double cutoff_freq, double sample_interval)
 }
 
 // Algorithm of Third-Order Command Prefilter
-void CommandPrefilter::update(double *input_sig, double *pos_f, double *vel_f, double *acc_f)
+void CommandPrefilter::update(const double& input_sig, double& pos_f, double& vel_f, double& acc_f)
 {
     // Command Input Signal
-    r = *input_sig;
+    r = input_sig;
 
     // Model Equations
     F[0] = xf[1];
@@ -39,7 +39,7 @@ void CommandPrefilter::update(double *input_sig, double *pos_f, double *vel_f, d
     }
 
     // Filtered Postion, Velocity, and Acceleration Commands
-    *pos_f = y[0];
-    *vel_f = y[1];
-    *acc_f = y[2];
+    pos_f = y[0];
+    vel_f = y[1];
+    acc_f = y[2];
 }

@@ -12,15 +12,13 @@
  */
 #pragma once
 
-#ifndef PI
-#define PI 3.1415926535897932384626433832795
-#endif
+#include <Arduino.h>
 
 class CommandPrefilter
 {
 public:
     void init(double cutoff_freq, double sample_interval);
-    void update(double* input_sig, double* pos_f, double* vel_f, double* acc_f);
+    void update(const double& input_sig, double& pos_f, double& vel_f, double& acc_f);
 
 private:
     double T;                 // Sample interval
